@@ -1,0 +1,6 @@
+includes: ['layer:basic', 'interface:http', 'layer:snap']
+ignore: ['.*.swp' ]
+options:
+  basic:
+    use_venv: true
+repo: https://git.launchpad.net/prometheus-libvirt-exporter-charm

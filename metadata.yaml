@@ -1,0 +1,16 @@
+name: prometheus-libvirt-exporter
+summary: Prometheus libvirt exporter
+maintainer: Prometheus Charmers <prometheus-charmers@lists.launchpad.net>
+description: |
+  This exporter connects to any libvirt daemon and exports per-domain metrics
+  related to CPU, memory, disk and network usage.
+  By default, this exporter listens on TCP port 9177.
+series:
+  - xenial
+  - bionic
+tags:
+  - monitoring
+subordinate: true
+provides:
+  scrape:
+    interface: http
