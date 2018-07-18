@@ -11,6 +11,15 @@ series:
 tags:
   - monitoring
 subordinate: true
+requires:
+  juju-info:
+    interface: juju-info
+    scope: container
 provides:
   scrape:
     interface: http
+resources:
+  prometheus-libvirt-exporter:
+    type: file
+    filename: prometheus-libvirt-exporter.snap
+    description: Prometheus-libvirt-exporter snap
