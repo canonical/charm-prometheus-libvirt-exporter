@@ -17,14 +17,8 @@ def install_packages():
     channel = config.get('snap_channel', 'stable')
     snap.install(SNAP_NAME, channel=channel, force_dangerous=False)
     hookenv.status_set('active', 'Exporter installed without problems')
+    hookenv.open_port(PORT_NUMBER)
     set_state('libvirt-exporter.installed')
-
-
-@when('libvirt-exporter.installed')
-def check_reconfig():
-    config = hookenv.config()
-    if config.changed('snap_channel'):
-        remove_state('libvirt-exporter.installed')
 
 
 @when('libvirt-exporter.installed')
@@ -40,6 +34,7 @@ def check_status():
         hookenv.status_set('active', 'Service started')
     else:
         hookenv.status_set('active', 'Service is up')
+        set_state('libvirt-exporter.started')
 
 
 # Relations
