@@ -3,6 +3,7 @@ from charms.reactive import (
     when, when_not, set_state, remove_state
 )
 from charms.layer import snap
+import subprocess
 
 
 SNAP_NAME = 'prometheus-libvirt-exporter'
@@ -16,7 +17,8 @@ def install_packages():
     config = hookenv.config()
     channel = config.get('snap_channel', 'stable')
     snap.install(SNAP_NAME, channel=channel, force_dangerous=False)
-    hookenv.status_set('active', 'Exporter installed without problems')
+    subprocess.check_call(['snap', 'connect', 'prometheus-libvirt-exporter:libvirt'])
+    hookenv.status_set('active', 'Exporter installed and connected to libvirt slot')
     hookenv.open_port(PORT_NUMBER)
     set_state('libvirt-exporter.installed')
 
