@@ -8,6 +8,7 @@ description: |
 series:
   - xenial
   - bionic
+  - focal
 tags:
   - monitoring
 subordinate: true
