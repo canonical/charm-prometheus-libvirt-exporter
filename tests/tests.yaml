@@ -2,7 +2,7 @@ charm_name: prometheus-libvirt-exporter
 gate_bundles:
   - xenial
   - bionic
-  #- focal # Uncomment when nrpe and prometheus2 become available for focal
+  - focal
 smoke_bundles:
   - bionic
 dev_bundles:
