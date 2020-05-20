@@ -19,8 +19,19 @@ requires:
 provides:
   scrape:
     interface: http
+  nrpe-external-master:
+    interface: nrpe-external-master
+    scope: container
+  dashboards:
+    interface: grafana-dashboard
 resources:
   prometheus-libvirt-exporter:
     type: file
     filename: prometheus-libvirt-exporter.snap
     description: Prometheus-libvirt-exporter snap
+  dashboards:
+    type: file
+    filename: grafana-dashboards.zip
+    description:
+      By default the charm is distributed with a dashboard that gets pushed to grafana.
+      You can override this dashboard with your own

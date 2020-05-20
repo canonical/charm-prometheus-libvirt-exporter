@@ -1,0 +1,14 @@
+charm_name: prometheus-libvirt-exporter
+gate_bundles:
+  - xenial
+  - bionic
+  #- focal # Uncomment when nrpe and prometheus2 become available for focal
+smoke_bundles:
+  - bionic
+dev_bundles:
+  - bionic
+target_deploy_status:
+  grafana:
+    workload-status-message: Started
+tests:
+  - tests.test_prometheus_libvirt_exporter.CharmOperationTest
