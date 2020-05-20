@@ -7,5 +7,8 @@ smoke_bundles:
   - bionic
 dev_bundles:
   - bionic
+target_deploy_status:
+  grafana:
+    workload-status-message: Started
 tests:
   - tests.test_prometheus_libvirt_exporter.CharmOperationTest

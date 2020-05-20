@@ -1363,12 +1363,12 @@
         "1d"
       ]
     },
-    "timezone": "",
-    "title": "libvirt",
-    "uid": "u_Zk_wuZk",
+    "timezone": "utc",
+    "title": "[juju] Libvirt metrics",
     "variables": {
       "list": []
     },
     "version": 288
-  }
+  },
+  "overwrite": true
 }
