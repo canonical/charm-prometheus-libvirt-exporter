@@ -1,4 +1,4 @@
-{
+{"dashboard": {
   "annotations": {
     "list": [
       {
@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 3,
+  "id": null,
   "iteration": 1592563565410,
   "links": [],
   "panels": [
@@ -1727,4 +1727,5 @@
   "title": "[juju] Libvirt Metrics",
   "uid": "u9TSBqiGk",
   "version": 21
-}
+},
+ "overwrite": true}

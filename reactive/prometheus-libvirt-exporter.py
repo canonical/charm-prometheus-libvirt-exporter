@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Installs and configures prometheus-libvirt-exporter."""
 
+import json
 import os
 from pathlib import Path
 import shutil
@@ -152,7 +153,7 @@ def register_grafana_dashboards():
     dash_dir = Path(DASHBOARD_PATH)
     for dash_file in dash_dir.glob('*.json'):
         dashboard = dash_file.read_text()
-        grafana_endpoint.register_dashboard(dash_file.stem, dashboard)
+        grafana_endpoint.register_dashboard(dash_file.stem, json.loads(dashboard))
         hookenv.log('Pushed {}'.format(dash_file))
 
 
