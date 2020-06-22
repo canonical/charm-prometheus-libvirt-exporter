@@ -11,6 +11,9 @@ applications:
   prometheus:
     charm: cs:prometheus2
     num_units: 1
+  grafana:
+    charm: cs:grafana
+    num_units: 1
 relations:
   - - ubuntu
     - prometheus-libvirt-exporter
@@ -20,3 +23,7 @@ relations:
     - nrpe:nrpe-external-master
   - - prometheus-libvirt-exporter:scrape
     - prometheus:target
+  - - prometheus:grafana-source
+    - grafana:grafana-source
+  - - prometheus-libvirt-exporter:dashboards
+    - grafana:dashboards

@@ -3,6 +3,7 @@ import logging
 import time
 import unittest
 
+import requests
 import zaza.model as model
 
 
@@ -76,3 +77,18 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             raise model.CommandRunFailed(cmd, result)
         content = result.get('Stdout')
         self.assertTrue(expected_nrpe_check in content)
+
+    def test_05_grafana_dashboard(self):
+        """Test if the grafana dashboard was successfully registered."""
+        action = model.run_action_on_leader("grafana", "get-admin-password")
+        self.assertTrue(action.data["results"]["Code"] == "0")
+        passwd = action.data["results"]["password"]
+        grafana_ip = model.get_app_ips("grafana")[0]
+        dash_url = "http://{}:3000/api/search".format(grafana_ip)
+        headers = {"Content-Type": "application/json"}
+        params = {"type": "dash-db", "query": "libvirt"}
+        api_auth = ("admin", passwd)
+        r = requests.get(dash_url, auth=api_auth, headers=headers, params=params)
+        self.assertEqual(r.status_code, 200)
+        dash = [d for d in r.json() if "Libvirt" in d["title"]]
+        self.assertEqual(len(dash), 1)
