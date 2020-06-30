@@ -148,10 +148,12 @@ def register_grafana_dashboards():
     grafana_endpoint = endpoint_from_flag('endpoint.dashboards.joined')
 
     if grafana_endpoint is None:
-        hookenv.log("No grafana endpoint available")
+        hookenv.log("register_grafana_dashboard: no grafana endpoint available")
         return
 
-    hookenv.log('Grafana relation joined, push dashboard')
+    hookenv.log(
+        'register_grafana_dashboard: grafana relation joined, push dashboard'
+    )
 
     # load pre-distributed dashboards, that may have been overwritten by resource
     dash_dir = Path(DASHBOARD_PATH)
@@ -161,7 +163,9 @@ def register_grafana_dashboards():
         dash_dict = json.loads(dashboard)
         dash_dict["digest"] = digest
         grafana_endpoint.register_dashboard(dash_file.stem, dash_dict)
-        hookenv.log('Pushed {}, digest {}'.format(dash_file, digest))
+        hookenv.log('register_grafana_dashboard: pushed {}, digest {}'.format(
+            dash_file, digest)
+        )
         set_state('libvirt-exporter.dashboard-registered')
 
 
