@@ -162,6 +162,7 @@ def register_grafana_dashboards():
         digest = hashlib.md5(dashboard.encode("utf8")).hexdigest()
         dash_dict = json.loads(dashboard)
         dash_dict["digest"] = digest
+        dash_dict["provider_model"] = hookenv.model_name()
         grafana_endpoint.register_dashboard(dash_file.stem, dash_dict)
         hookenv.log('register_grafana_dashboard: pushed {}, digest {}'.format(
             dash_file, digest)
