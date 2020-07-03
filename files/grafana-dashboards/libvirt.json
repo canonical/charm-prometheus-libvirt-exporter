@@ -34,9 +34,9 @@
       "type": "row"
     },
     {
-      "content": "# Important info\n\nIf you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching targets\"\n\n\n",
+      "content": "# Important info\n\nIf you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching Hosts\"\n\n\n",
       "datasource": null,
-      "description": "If you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching targets\"",
+      "description": "If you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching Hosts\"",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -57,7 +57,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -113,7 +113,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Matching Targets",
+      "title": "Matching Hosts",
       "type": "stat"
     },
     {
@@ -131,7 +131,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Number of virtual CPUs per instance, stacked",
       "fieldConfig": {
         "defaults": {
@@ -194,7 +194,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Total cores allocated on a given hypervisor",
       "fieldConfig": {
         "defaults": {
@@ -308,7 +308,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "CPU time used by the domain, in seconds - rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -421,7 +421,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Total memory used per hypervisor",
       "fieldConfig": {
         "defaults": {
@@ -520,7 +520,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance memory usage, stacked",
       "fieldConfig": {
         "defaults": {
@@ -615,7 +615,7 @@
       }
     },
     {
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Maximum allowed memory per instance",
       "fieldConfig": {
         "defaults": {
@@ -691,7 +691,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Network traffic in bytes, rate over 1min, receive/transmit per instance, cumulative over all interfaces",
       "fieldConfig": {
         "defaults": {
@@ -796,7 +796,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Network traffic in packets, rate over 1min, receive/transmit per instance, cumulative over all interfaces",
       "fieldConfig": {
         "defaults": {
@@ -901,7 +901,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Total network throughput rates per hypervisor, rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1005,7 +1005,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Total network throughput rates per hypervisor, rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1110,7 +1110,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance errors and drops, transmit and receive. Rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1240,7 +1240,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance block dev read request rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1338,7 +1338,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance block dev write request rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1436,7 +1436,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance block device read bytes rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1534,7 +1534,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus2 - Juju generated source",
+      "datasource": "prometheus - Juju generated source",
       "description": "Instance block device write bytes rate over 1min",
       "fieldConfig": {
         "defaults": {
@@ -1638,71 +1638,24 @@
     "list": [
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "tags": [
-            {
-              "selected": true,
-              "text": "AZ1",
-              "values": [
-                "juju-d238a5-20.lxd"
-              ],
-              "valuesText": "juju-d238a5-20.lxd"
-            },
-            {
-              "selected": true,
-              "text": "AZ2",
-              "values": [
-                "juju-d238a5-27.lxd"
-              ],
-              "valuesText": "juju-d238a5-27.lxd"
-            }
-          ],
-          "text": "juju-d238a5-20.lxd + juju-d238a5-27.lxd",
-          "value": [
-            "juju-d238a5-20.lxd",
-            "juju-d238a5-27.lxd"
-          ]
-        },
-        "datasource": "prometheus2 - Juju generated source",
-        "definition": "label_values(hypervisor_vcpus_total, hypervisor_hostname)",
+        "datasource": "prometheus - Juju generated source",
+        "definition": "label_values(libvirt_up, dns_name)",
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": true,
         "name": "host",
-        "options": [
-          {
-            "selected": true,
-            "text": "juju-d238a5-20.lxd",
-            "value": "juju-d238a5-20.lxd"
-          },
-          {
-            "selected": true,
-            "text": "juju-d238a5-27.lxd",
-            "value": "juju-d238a5-27.lxd"
-          }
-        ],
-        "query": "label_values(hypervisor_vcpus_total, hypervisor_hostname)",
-        "refresh": 0,
+        "options": [],
+        "query": "label_values(libvirt_up, dns_name)",
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "label_values(hypervisor_vcpus_total{aggregate=~\"$tag\"}, hypervisor_hostname)",
-        "tags": [
-          {
-            "text": "AZ1"
-          },
-          {
-            "text": "AZ2"
-          },
-          {
-            "text": "unknown"
-          }
-        ],
+        "tags": [],
         "tagsQuery": "label_values(hypervisor_vcpus_total, aggregate)",
         "type": "query",
-        "useTags": true
+        "useTags": false
       }
     ]
   },
@@ -1723,8 +1676,7 @@
       "1d"
     ]
   },
-  "timezone": "",
-  "title": "[juju] Libvirt Metrics",
-  "version": 21
+  "timezone": "utc",
+  "title": "[juju] Libvirt Metrics"
 },
  "overwrite": true}

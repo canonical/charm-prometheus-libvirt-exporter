@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Installs and configures prometheus-libvirt-exporter."""
-
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -50,7 +50,9 @@ def upgrade():
     hookenv.status_set('maintenance', 'Charm upgrade in progress')
     remove_state('libvirt-exporter.installed')
     remove_state('libvirt-exporter.started')
+    remove_state('libvirt-exporter.dashboard-registered')
     update_dashboards_from_resource()
+    register_grafana_dashboards()
 
 
 @when_not('libvirt-exporter.started')
@@ -140,21 +142,31 @@ def remove_nrpe_check():
 
 
 @when_all('leadership.is_leader', 'endpoint.dashboards.joined')
+@when_not('libvirt-exporter.dashboard-registered')
 def register_grafana_dashboards():
     """After joining to grafana, push the dashboard."""
     grafana_endpoint = endpoint_from_flag('endpoint.dashboards.joined')
 
     if grafana_endpoint is None:
+        hookenv.log("register_grafana_dashboard: no grafana endpoint available")
         return
 
-    hookenv.log('Grafana relation joined, push dashboard')
+    hookenv.log(
+        'register_grafana_dashboard: grafana relation joined, push dashboard'
+    )
 
     # load pre-distributed dashboards, that may have been overwritten by resource
     dash_dir = Path(DASHBOARD_PATH)
     for dash_file in dash_dir.glob('*.json'):
         dashboard = dash_file.read_text()
-        grafana_endpoint.register_dashboard(dash_file.stem, json.loads(dashboard))
-        hookenv.log('Pushed {}'.format(dash_file))
+        digest = hashlib.md5(dashboard.encode("utf8")).hexdigest()
+        dash_dict = json.loads(dashboard)
+        dash_dict["digest"] = digest
+        grafana_endpoint.register_dashboard(dash_file.stem, dash_dict)
+        hookenv.log('register_grafana_dashboard: pushed {}, digest {}'.format(
+            dash_file, digest)
+        )
+        set_state('libvirt-exporter.dashboard-registered')
 
 
 def update_dashboards_from_resource():
