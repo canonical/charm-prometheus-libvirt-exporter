@@ -144,7 +144,12 @@ def remove_nrpe_check():
 @when_all('leadership.is_leader', 'endpoint.dashboards.joined')
 @when_not('libvirt-exporter.dashboard-registered')
 def register_grafana_dashboards():
-    """After joining to grafana, push the dashboard."""
+    """After joining to grafana, push the dashboard.
+
+    Along with the dashboard, the current juju model name is transmitted
+    as well. This enables grafana to detect CMR deployments (and possibly
+    specific handling for dashboards coming from foreing models).
+    """
     grafana_endpoint = endpoint_from_flag('endpoint.dashboards.joined')
 
     if grafana_endpoint is None:
@@ -162,6 +167,7 @@ def register_grafana_dashboards():
         digest = hashlib.md5(dashboard.encode("utf8")).hexdigest()
         dash_dict = json.loads(dashboard)
         dash_dict["digest"] = digest
+        dash_dict["source_model"] = hookenv.model_name()
         grafana_endpoint.register_dashboard(dash_file.stem, dash_dict)
         hookenv.log('register_grafana_dashboard: pushed {}, digest {}'.format(
             dash_file, digest)
