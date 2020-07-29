@@ -148,7 +148,7 @@ def register_grafana_dashboards():
 
     Along with the dashboard, the current juju model name is transmitted
     as well. This enables grafana to detect CMR deployments (and possibly
-    specific handling for dashboards coming from foreing models).
+    specific handling for dashboards coming from foreign models).
     """
     grafana_endpoint = endpoint_from_flag('endpoint.dashboards.joined')
 
