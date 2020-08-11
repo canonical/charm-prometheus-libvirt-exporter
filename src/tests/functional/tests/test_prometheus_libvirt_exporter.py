@@ -47,13 +47,13 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
 
             # Set privileged container
             logging.info("Running cmd: 'lxc config set {} "
-                          "security.privileged true'".format(hostname))
+                         "security.privileged true'".format(hostname))
             privileged_cmd = "lxc config set {} security.privileged true".format(hostname)
             subprocess.call(privileged_cmd, shell=True)
 
             # Attach kvm device
             logging.info("Running cmd: 'lxc config device add {} "
-                          "kvm unix-char path=/dev/kvm'".format(hostname))
+                         "kvm unix-char path=/dev/kvm'".format(hostname))
             kvm_cmd = "lxc config device add {} kvm unix-char path=/dev/kvm".format(
               hostname
             )
