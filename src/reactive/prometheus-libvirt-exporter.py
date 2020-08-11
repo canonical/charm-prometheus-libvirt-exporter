@@ -3,13 +3,14 @@
 import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
+from pathlib import Path
 from zipfile import BadZipFile, ZipFile
 
 from charmhelpers.contrib.charmsupport import nrpe
 from charmhelpers.core import hookenv, host
+
 from charms.layer import snap
 from charms.reactive import (
     endpoint_from_flag,
