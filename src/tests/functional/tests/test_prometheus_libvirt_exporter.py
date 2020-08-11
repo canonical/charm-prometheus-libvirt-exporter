@@ -30,9 +30,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         cls.lead_unit_name = model.get_lead_unit_name(
             cls.application_name, model_name=cls.model_name
         )
-        cls.units = model.get_units(
-            cls.application_name, model_name=cls.model_name
-        )
+        cls.units = model.get_units(cls.application_name, model_name=cls.model_name)
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
         model.block_until_all_units_idle()
         if controller.get_cloud_type() == "lxd":
@@ -40,22 +38,28 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
             cmd = "hostname"
             result = model.run_on_unit(cls.lead_unit_name, cmd)
-            code = result.get('Code')
-            if code != '0':
+            code = result.get("Code")
+            if code != "0":
                 raise model.CommandRunFailed(cmd, result)
             hostname = result.get("Stdout").strip()
 
             # Set privileged container
-            logging.info("Running cmd: 'lxc config set {} "
-                         "security.privileged true'".format(hostname))
-            privileged_cmd = "lxc config set {} security.privileged true".format(hostname)
+            logging.info(
+                "Running cmd: 'lxc config set {} "
+                "security.privileged true'".format(hostname)
+            )
+            privileged_cmd = "lxc config set {} security.privileged true".format(
+                hostname
+            )
             subprocess.call(privileged_cmd, shell=True)
 
             # Attach kvm device
-            logging.info("Running cmd: 'lxc config device add {} "
-                         "kvm unix-char path=/dev/kvm'".format(hostname))
+            logging.info(
+                "Running cmd: 'lxc config device add {} "
+                "kvm unix-char path=/dev/kvm'".format(hostname)
+            )
             kvm_cmd = "lxc config device add {} kvm unix-char path=/dev/kvm".format(
-              hostname
+                hostname
             )
             subprocess.call(kvm_cmd, shell=True)
             # Restart container
@@ -82,10 +86,12 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         sudo virt-install --name testvm --memory 128 \
           --cdrom /var/lib/libvirt/images/cirros.img \
           --nographics --nonetworks  --noautoconsole --nodisk
-        """.format(" ".join(PACKAGES), wget_cmd)
+        """.format(
+            " ".join(PACKAGES), wget_cmd
+        )
         result = model.run_on_unit(cls.lead_unit_name, cmd)
-        code = result.get('Code')
-        if code != '0':
+        code = result.get("Code")
+        if code != "0":
             raise model.CommandRunFailed(cmd, result)
 
     @classmethod
@@ -111,9 +117,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             if response["Code"] == "0":
                 return
             logging.warning(
-                "Unexpected curl response: {}. Retrying in 30s.".format(
-                    response
-                )
+                "Unexpected curl response: {}. Retrying in 30s.".format(response)
             )
             time.sleep(30)
 
@@ -121,25 +125,23 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         self.fail(
             "Prometheus-libvirt-exporter didn't respond to the command \n"
             "'{curl_command}' as expected.\n"
-            "Result: {result}".format(
-                curl_command=curl_command, result=response
-            )
+            "Result: {result}".format(curl_command=curl_command, result=response)
         )
 
     def test_02_nrpe_http_check(self):
         """Verify nrpe check exists."""
         expected_nrpe_check = "command[check_prometheus_libvirt_exporter_http]={} -I 127.0.0.1 -p {} -u {}".format(
-            "/usr/lib/nagios/plugins/check_http",
-            DEFAULT_API_PORT,
-            DEFAULT_API_URL
+            "/usr/lib/nagios/plugins/check_http", DEFAULT_API_PORT, DEFAULT_API_URL
         )
-        logging.debug('Verify the nrpe check is created and has the required content...')
+        logging.debug(
+            "Verify the nrpe check is created and has the required content..."
+        )
         cmd = "cat /etc/nagios/nrpe.d/check_prometheus_libvirt_exporter_http.cfg"
         result = model.run_on_unit(self.lead_unit_name, cmd)
-        code = result.get('Code')
-        if code != '0':
+        code = result.get("Code")
+        if code != "0":
             raise model.CommandRunFailed(cmd, result)
-        content = result.get('Stdout')
+        content = result.get("Stdout")
         self.assertTrue(expected_nrpe_check in content)
 
     def test_03_api_metrics(self):
@@ -152,10 +154,13 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             response = requests.get(url)
 
             if response.status_code == 200:
-                metrics = [line for line in response.text.splitlines() if
-                           line.startswith("libvirt")]
+                metrics = [
+                    line
+                    for line in response.text.splitlines()
+                    if line.startswith("libvirt")
+                ]
                 self.assertTrue("libvirt_up 1" in metrics)
-                pat = re.compile(r'libvirt_domain_info_virtual_cpus.*testvm')
+                pat = re.compile(r"libvirt_domain_info_virtual_cpus.*testvm")
                 matches = [metric for metric in metrics if pat.search(metric)]
                 self.assertEqual(len(matches), 1)
                 return
