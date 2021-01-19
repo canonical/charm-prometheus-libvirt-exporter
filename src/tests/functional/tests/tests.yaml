@@ -10,5 +10,8 @@ dev_bundles:
 target_deploy_status:
   grafana:
     workload-status-message: Started
+  nrpe:
+    workload-status: blocked
+    workload-status-message: Nagios server not configured or related
 tests:
   - tests.test_prometheus_libvirt_exporter.CharmOperationTest
