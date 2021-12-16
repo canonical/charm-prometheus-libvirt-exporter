@@ -66,8 +66,9 @@ proof: build
 	@charm proof ${CHARM_BUILD_DIR}/${CHARM_NAME}
 
 unittests:
-	# @cd src && tox -e unit
-	@echo "No unit tests. Skipping."
+	@echo "Running unit tests"
+	@cd src && tox -e unit
+
 
 functional: build
 	@echo "Executing functional tests in ${CHARM_BUILD_DIR}"

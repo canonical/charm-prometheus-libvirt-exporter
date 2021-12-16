@@ -29,6 +29,7 @@ DASHBOARD_PATH = os.getcwd() + "/files/grafana-dashboards"
 SNAP_NAME = "prometheus-libvirt-exporter"
 SVC_NAME = "snap.prometheus-libvirt-exporter.daemon"
 PORT_NUMBER = "9177"
+LIBVIRTD_APPARMOR_LOCAL_PROFILE = "/etc/apparmor.d/local/usr.sbin.libvirtd"
 
 
 @when("juju-info.connected")
@@ -40,6 +41,10 @@ def install_packages():
     channel = config.get("snap_channel")
     snap.install(SNAP_NAME, channel=channel, force_dangerous=False)
     subprocess.check_call(["snap", "connect", "prometheus-libvirt-exporter:libvirt"])
+
+    # LP#1954934: silence libvirtd ptrace apparmor denials
+    configure_libvirtd_apparmor_local_profile(LIBVIRTD_APPARMOR_LOCAL_PROFILE)
+
     hookenv.status_set("active", "Exporter installed and connected to libvirt slot")
     hookenv.open_port(PORT_NUMBER)
     set_state("libvirt-exporter.installed")
@@ -205,3 +210,25 @@ def update_dashboards_from_resource():
         return
 
     register_grafana_dashboards()
+
+
+def configure_libvirtd_apparmor_local_profile(libvirtd_apparmor_local_profile):
+    """Silence libvirtd ptrace apparmor denials from kern.log."""
+    deny_ptrace_rule = (
+        "deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,"
+    )
+
+    # Read current local profile and strip new lines.
+    current_profile_lines = open(libvirtd_apparmor_local_profile, "r").readlines()
+    current_profile_lines = list(map(str.strip, current_profile_lines))
+
+    # If deny ptrace rule is already there do nothing.
+    if deny_ptrace_rule in current_profile_lines:
+        return
+
+    # Add ptrace deny rule
+    open(libvirtd_apparmor_local_profile, "a").write("\n" + deny_ptrace_rule + "\n")
+
+    # Reload libvirtd apparmor profile
+    libvirtd_apparmor_profile = "/etc/apparmor.d/usr.sbin.libvirtd"
+    subprocess.check_call(["apparmor_parser", "-r", libvirtd_apparmor_profile])
