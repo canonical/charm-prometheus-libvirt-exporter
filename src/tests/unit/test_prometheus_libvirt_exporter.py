@@ -17,8 +17,7 @@ local_profile_no_change = """# Rule is already present
 deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,
 """
 
-local_profile_change = """# Rule is not present
-"""
+local_profile_change = """# Rule is not present"""
 
 
 class TestLibvirtdApparmorLocalProfile(unittest.TestCase):
@@ -66,5 +65,5 @@ class TestLibvirtdApparmorLocalProfile(unittest.TestCase):
 
         self.assertEqual(actual_lines, expected_lines)
         check_call.assert_called_with(
-            ["/sbin/apparmor_parser", "-r", "/etc/apparmor.d/usr.sbin.libvirtd"]
+            ["apparmor_parser", "-r", "/etc/apparmor.d/usr.sbin.libvirtd"]
         )

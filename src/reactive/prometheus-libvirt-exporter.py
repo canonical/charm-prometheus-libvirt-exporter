@@ -227,8 +227,8 @@ def configure_libvirtd_apparmor_local_profile(libvirtd_apparmor_local_profile):
         return
 
     # Add ptrace deny rule
-    open(libvirtd_apparmor_local_profile, "a").write(deny_ptrace_rule + "\n")
+    open(libvirtd_apparmor_local_profile, "a").write("\n" + deny_ptrace_rule + "\n")
 
     # Reload libvirtd apparmor profile
     libvirtd_apparmor_profile = "/etc/apparmor.d/usr.sbin.libvirtd"
-    subprocess.check_call(["/sbin/apparmor_parser", "-r", libvirtd_apparmor_profile])
+    subprocess.check_call(["apparmor_parser", "-r", libvirtd_apparmor_profile])
