@@ -218,6 +218,10 @@ def configure_libvirtd_apparmor_local_profile(libvirtd_apparmor_local_profile):
         "deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,"
     )
 
+    # if there is no libvirtd installed this is a noop
+    if not os.path.exists(libvirtd_apparmor_local_profile):
+        return
+
     # Read current local profile and strip new lines.
     current_profile_lines = open(libvirtd_apparmor_local_profile, "r").readlines()
     current_profile_lines = list(map(str.strip, current_profile_lines))
