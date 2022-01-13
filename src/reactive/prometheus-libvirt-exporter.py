@@ -122,7 +122,7 @@ def update_nrpe_config(svc):
     nrpe_setup = nrpe.NRPE(hostname=hostname)
     config = hookenv.config()
     try:
-        nrpe_timeout = str(int(config["check_timeout"]))
+        nrpe_timeout = str(int(config["nrpe_check_timeout"]))
     except ValueError:
         nrpe_timeout = "15"
     nrpe_setup.add_check(
