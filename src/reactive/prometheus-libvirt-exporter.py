@@ -120,9 +120,16 @@ def update_nrpe_config(svc):
 
     hostname = nrpe.get_nagios_hostname()
     nrpe_setup = nrpe.NRPE(hostname=hostname)
+    config = hookenv.config()
+    try:
+        nrpe_timeout = str(int(config["nrpe_check_timeout"]))
+    except ValueError:
+        nrpe_timeout = "15"
     nrpe_setup.add_check(
         shortname="prometheus_libvirt_exporter_http",
-        check_cmd="check_http -I 127.0.0.1 -p {} -u /metrics".format(PORT_NUMBER),
+        check_cmd="check_http -I 127.0.0.1 -p {} -u /metrics -t {}".format(
+            PORT_NUMBER, nrpe_timeout
+        ),
         description="Prometheus Libvirt Exporter HTTP check",
     )
     nrpe_setup.write()
