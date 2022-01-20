@@ -36,6 +36,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         # https://github.com/openstack-charmers/zaza/issues/472
         os.environ["ZAZA_FEATURE_BUG472"] = "1"
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
+        cls.grafana_ip = model.get_app_ips("grafana")[0]
         model.block_until_all_units_idle()
         if controller.get_cloud_type() == "lxd":
             # Get hostname
@@ -192,8 +193,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         action = model.run_action_on_leader("grafana", "get-admin-password")
         self.assertTrue(action.data["results"]["Code"] == "0")
         passwd = action.data["results"]["password"]
-        grafana_ip = model.get_app_ips("grafana")[0]
-        dash_url = "http://{}:3000/api/search".format(grafana_ip)
+        dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
         headers = {"Content-Type": "application/json"}
         params = {"type": "dash-db", "query": "libvirt"}
         api_auth = ("admin", passwd)
