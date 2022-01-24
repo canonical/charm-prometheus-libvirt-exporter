@@ -32,12 +32,13 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             cls.application_name, model_name=cls.model_name
         )
         cls.units = model.get_units(cls.application_name, model_name=cls.model_name)
+        model.block_until_all_units_idle()
         # workaround for 'Public address not found for prometheus-libvirt-exporter/0'
         # https://github.com/openstack-charmers/zaza/issues/472
         os.environ["ZAZA_FEATURE_BUG472"] = "1"
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
+        del os.environ["ZAZA_FEATURE_BUG472"]
         cls.grafana_ip = model.get_app_ips("grafana")[0]
-        model.block_until_all_units_idle()
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
@@ -133,7 +134,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             "Result: {result}".format(curl_command=curl_command, result=response)
         )
 
-    def test_01_nrpe_http_check(self):
+    def test_02_nrpe_http_check(self):
         """Verify nrpe check exists."""
         expected_nrpe_check = (
             "command[check_prometheus_libvirt_exporter_http]"
@@ -152,7 +153,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         content = result.get("Stdout")
         self.assertTrue(expected_nrpe_check in content)
 
-    def test_02_api_metrics(self):
+    def test_03_api_metrics(self):
         """Verify if we get libvirt metrics from the scrape endpoint."""
         timeout = time.time() + TEST_TIMEOUT
         url = "http://{}:{}/metrics".format(
@@ -188,7 +189,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             )
         )
 
-    def test_03_grafana_dashboard(self):
+    def test_04_grafana_dashboard(self):
         """Test if the grafana dashboard was successfully registered."""
         action = model.run_action_on_leader("grafana", "get-admin-password")
         self.assertTrue(action.data["results"]["Code"] == "0")
