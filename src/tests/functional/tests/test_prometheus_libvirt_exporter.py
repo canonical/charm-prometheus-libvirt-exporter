@@ -14,7 +14,7 @@ import zaza.model as model
 
 TEST_TIMEOUT = 180
 DEFAULT_API_PORT = "9177"
-DEFAULT_API_URL = "/metrics"
+DEFAULT_API_URL = "/"
 PACKAGES = ("qemu-kvm", "libvirt-daemon", "libvirt-daemon-system", "virtinst")
 CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img"
 
@@ -32,8 +32,13 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             cls.application_name, model_name=cls.model_name
         )
         cls.units = model.get_units(cls.application_name, model_name=cls.model_name)
-        cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
         model.block_until_all_units_idle()
+        # workaround for 'Public address not found for prometheus-libvirt-exporter/0'
+        # https://github.com/openstack-charmers/zaza/issues/472
+        os.environ["ZAZA_FEATURE_BUG472"] = "1"
+        cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
+        del os.environ["ZAZA_FEATURE_BUG472"]
+        cls.grafana_ip = model.get_app_ips("grafana")[0]
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
@@ -133,7 +138,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         """Verify nrpe check exists."""
         expected_nrpe_check = (
             "command[check_prometheus_libvirt_exporter_http]"
-            "={} -I 127.0.0.1 -p {} -u {}".format(
+            "={} -I 127.0.0.1 -p {} -u {} -e 200".format(
                 "/usr/lib/nagios/plugins/check_http", DEFAULT_API_PORT, DEFAULT_API_URL
             )
         )
@@ -184,13 +189,12 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             )
         )
 
-    def test_05_grafana_dashboard(self):
+    def test_04_grafana_dashboard(self):
         """Test if the grafana dashboard was successfully registered."""
         action = model.run_action_on_leader("grafana", "get-admin-password")
         self.assertTrue(action.data["results"]["Code"] == "0")
         passwd = action.data["results"]["password"]
-        grafana_ip = model.get_app_ips("grafana")[0]
-        dash_url = "http://{}:3000/api/search".format(grafana_ip)
+        dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
         headers = {"Content-Type": "application/json"}
         params = {"type": "dash-db", "query": "libvirt"}
         api_auth = ("admin", passwd)
