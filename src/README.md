@@ -59,5 +59,9 @@ zip grafana-dashboards.zip libvirt-simple.json libvirtadvanced.json
 juju attach-resource prometheus-libvirt-exporter dashboards=./grafana-dashboards.zip
 ```
 
+# List of metrics collected by prometheus-libvirt-exporter snap
+
+See [List of metrics](./metrics.md)
+
 # Contact Information
 - Charm bugs: https://bugs.launchpad.net/charm-prometheus-libvirt-exporter
