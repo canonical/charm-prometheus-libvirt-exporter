@@ -79,7 +79,7 @@ unittests:
 
 functional: build
 	@echo "Executing functional tests in ${CHARM_BUILD_DIR}"
-	@cd src && CHARM_BUILD_DIR=${CHARM_BUILD_DIR} tox -e func
+	@cd src && CHARM_PROJECTPATH=${PROJECTPATH} CHARM_BUILD_DIR=${CHARM_BUILD_DIR} tox -e func
 
 test: lint proof unittests functional
 	@echo "Tests completed for charm ${CHARM_NAME}."

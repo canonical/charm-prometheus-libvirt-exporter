@@ -9,6 +9,7 @@ series:
   - xenial
   - bionic
   - focal
+  - jammy
 tags:
   - monitoring
 subordinate: true

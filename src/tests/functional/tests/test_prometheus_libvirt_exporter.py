@@ -17,6 +17,12 @@ DEFAULT_API_PORT = "9177"
 DEFAULT_API_URL = "/"
 PACKAGES = ("qemu-kvm", "libvirt-daemon", "libvirt-daemon-system", "virtinst")
 CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img"
+UBUNTU_SERIES_CODE = {
+    "jammy": "22.04",
+    "focal": "20.04",
+    "bionic": "18.04",
+    "xenial": "16.04",
+}
 
 
 class BasePrometheusLibvirtExporterTest(unittest.TestCase):
@@ -85,15 +91,20 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         wget_cmd += "-q {} -O /var/lib/libvirt/images/cirros.img".format(CIRROS_URL)
 
         # Install libvirt pkgs and bring up VM
+        machine = model.get_machines(cls.application_name)[0]
+        series = machine.series
+        osinfo = "ubuntu{}".format(UBUNTU_SERIES_CODE.get(series))
+
         cmd = """
         sudo apt-get update
         sudo apt-get -qy install {}
         {}
         sudo virt-install --name testvm --memory 128 \
           --cdrom /var/lib/libvirt/images/cirros.img \
-          --nographics --nonetworks  --noautoconsole --nodisk
+          --nographics --nonetworks  --noautoconsole --nodisk \
+          --osinfo {}
         """.format(
-            " ".join(PACKAGES), wget_cmd
+            " ".join(PACKAGES), wget_cmd, osinfo
         )
         result = model.run_on_unit(cls.lead_unit_name, cmd)
         code = result.get("Code")
