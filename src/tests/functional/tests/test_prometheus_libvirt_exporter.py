@@ -93,7 +93,11 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         # Install libvirt pkgs and bring up VM
         machine = model.get_machines(cls.application_name)[0]
         series = machine.series
-        osinfo = "ubuntu{}".format(UBUNTU_SERIES_CODE.get(series))
+
+        osinfo = ""
+        if series == "jammy":
+            osinfo = "--osinfo ubuntu{}".format(UBUNTU_SERIES_CODE.get(series))
+
 
         cmd = """
         sudo apt-get update
@@ -102,7 +106,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         sudo virt-install --name testvm --memory 128 \
           --cdrom /var/lib/libvirt/images/cirros.img \
           --nographics --nonetworks  --noautoconsole --nodisk \
-          --osinfo {}
+          {}
         """.format(
             " ".join(PACKAGES), wget_cmd, osinfo
         )

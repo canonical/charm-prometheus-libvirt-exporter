@@ -1,6 +1,5 @@
 charm_name: prometheus-libvirt-exporter
 gate_bundles:
-  - xenial
   - bionic
   - focal
   - jammy
