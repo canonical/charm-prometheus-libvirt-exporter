@@ -5,10 +5,7 @@ description: |
   This exporter connects to any libvirt daemon and exports per-domain metrics
   related to CPU, memory, disk and network usage.
   By default, this exporter listens on TCP port 9177.
-series:
-  - xenial
-  - bionic
-  - focal
+series: []
 tags:
   - monitoring
 subordinate: true
