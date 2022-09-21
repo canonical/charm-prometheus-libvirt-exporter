@@ -98,7 +98,6 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         if series == "jammy":
             osinfo = "--osinfo ubuntu{}".format(UBUNTU_SERIES_CODE.get(series))
 
-
         cmd = """
         sudo apt-get update
         sudo apt-get -qy install {}
