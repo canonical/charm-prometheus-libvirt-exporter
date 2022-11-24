@@ -1,12 +1,11 @@
 charm_name: prometheus-libvirt-exporter
 gate_bundles:
-  - bionic
   - focal
   - jammy
 smoke_bundles:
-  - bionic
+  - focal
 dev_bundles:
-  - bionic
+  - focal
 target_deploy_status:
   ubuntu:
     workload-status-message-prefix: ""
