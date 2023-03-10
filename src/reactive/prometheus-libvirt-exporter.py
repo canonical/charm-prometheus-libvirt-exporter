@@ -24,7 +24,6 @@ from charms.reactive import (
     when_not_all,
 )
 
-
 DASHBOARD_PATH = os.getcwd() + "/files/grafana-dashboards"
 SNAP_NAME = "prometheus-libvirt-exporter"
 SVC_NAME = "snap.prometheus-libvirt-exporter.daemon"
@@ -56,7 +55,6 @@ def upgrade():
     hookenv.status_set("maintenance", "Charm upgrade in progress")
     remove_state("libvirt-exporter.installed")
     remove_state("libvirt-exporter.started")
-    remove_state("libvirt-exporter.dashboard-registered")
     update_dashboards_from_resource()
     register_grafana_dashboards()
 
@@ -151,7 +149,6 @@ def remove_nrpe_check():
 
 
 @when_all("leadership.is_leader", "endpoint.dashboards.joined")
-@when_not("libvirt-exporter.dashboard-registered")
 def register_grafana_dashboards():
     """After joining to grafana, push the dashboard.
 
@@ -160,7 +157,6 @@ def register_grafana_dashboards():
     specific handling for dashboards coming from foreign models).
     """
     grafana_endpoint = endpoint_from_flag("endpoint.dashboards.joined")
-
     if grafana_endpoint is None:
         hookenv.log("register_grafana_dashboard: no grafana endpoint available")
         return
@@ -179,7 +175,6 @@ def register_grafana_dashboards():
         hookenv.log(
             "register_grafana_dashboard: pushed {}, digest {}".format(dash_file, digest)
         )
-        set_state("libvirt-exporter.dashboard-registered")
 
 
 def update_dashboards_from_resource():
