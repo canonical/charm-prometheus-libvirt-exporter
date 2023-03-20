@@ -148,7 +148,7 @@ def remove_nrpe_check():
     remove_state("libvirt-exporter.configured")
 
 
-@when_all("leadership.is_leader", "endpoint.dashboards.joined")
+@when("leadership.is_leader", "scrape.available", "endpoint.dashboards.joined")
 def register_grafana_dashboards():
     """After joining to grafana, push the dashboard.
 
