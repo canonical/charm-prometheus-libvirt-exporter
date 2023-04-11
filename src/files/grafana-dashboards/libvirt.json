@@ -34,9 +34,9 @@
       "type": "row"
     },
     {
-      "content": "# Important info\n\nIf you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching Hosts\"\n\n\n",
+      "content": "# Important info\n\nIf you match very high number of DNS names you may kill your browser and/or prometheus. See \"Matching DNS names\"\n\n\n",
       "datasource": null,
-      "description": "If you match very high number of hosts you may kill your browser and/or prometheus. See \"Matching Hosts\"",
+      "description": "If you match very high number of DNS names you may kill your browser and/or prometheus. See \"Matching DNS names\"",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -105,7 +105,7 @@
       "pluginVersion": "7.0.3",
       "targets": [
         {
-          "expr": "count(libvirt_up{dns_name=~\"$host\"})",
+          "expr": "count(libvirt_up{dns_name=~\"$dns_name\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -113,7 +113,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Matching Hosts",
+      "title": "Matching DNS names",
       "type": "stat"
     },
     {
@@ -178,7 +178,7 @@
       "pluginVersion": "7.0.3",
       "targets": [
         {
-          "expr": "libvirt_domain_info_virtual_cpus{dns_name=~\"$host\"}",
+          "expr": "libvirt_domain_info_virtual_cpus{dns_name=~\"$dns_name\"}",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}",
           "refId": "A"
@@ -254,7 +254,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,name,project_name,uuid)(libvirt_domain_info_virtual_cpus{dns_name=~\"$host\"})",
+          "expr": "sum without(flavor,group,instance,job,name,project_name,uuid)(libvirt_domain_info_virtual_cpus{dns_name=~\"$dns_name\"})",
           "interval": "",
           "legendFormat": "{{domain}}",
           "refId": "A"
@@ -353,7 +353,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(libvirt_domain_info_cpu_time_seconds_total{dns_name=~\"$host\"}[1m])",
+          "expr": "rate(libvirt_domain_info_cpu_time_seconds_total{dns_name=~\"$dns_name\"}[1m])",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}",
           "refId": "A"
@@ -466,7 +466,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,name,project_name,uuid)(libvirt_domain_info_memory_usage_bytes{dns_name=~\"$host\"})",
+          "expr": "sum without(flavor,group,instance,job,name,project_name,uuid)(libvirt_domain_info_memory_usage_bytes{dns_name=~\"$dns_name\"})",
           "interval": "",
           "legendFormat": "{{domain}}",
           "refId": "A"
@@ -565,7 +565,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "libvirt_domain_info_memory_usage_bytes{dns_name=~\"$host\"}",
+          "expr": "libvirt_domain_info_memory_usage_bytes{dns_name=~\"$dns_name\"}",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}",
           "refId": "A"
@@ -659,7 +659,7 @@
       "pluginVersion": "7.0.3",
       "targets": [
         {
-          "expr": "libvirt_domain_info_maximum_memory_bytes{dns_name=~\"$host\"}",
+          "expr": "libvirt_domain_info_maximum_memory_bytes{dns_name=~\"$dns_name\"}",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -736,13 +736,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_bytes_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_bytes_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "rx: {{domain}}: {{name}}",
           "refId": "A"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_bytes_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_bytes_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "tx: {{domain}}:  {{name}}",
           "refId": "B"
@@ -841,13 +841,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_packets_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_packets_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "rx: {{domain}}: {{name}}",
           "refId": "A"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_packets_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_packets_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "tx: {{domain}}: {{name}}",
           "refId": "B"
@@ -945,13 +945,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device, domain)(rate(libvirt_domain_interface_stats_receive_bytes_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device, domain)(rate(libvirt_domain_interface_stats_receive_bytes_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "rx: {{domain}}",
           "refId": "A"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_bytes_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_bytes_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "tx: {{domain}}",
           "refId": "B"
@@ -1050,13 +1050,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device,domain)(rate(libvirt_domain_interface_stats_receive_packets_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device,domain)(rate(libvirt_domain_interface_stats_receive_packets_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "rx: {{domain}}",
           "refId": "A"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_packets_total{dns_name=~\"$host\"}[1m]))",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_packets_total{dns_name=~\"$dns_name\"}[1m]))",
           "interval": "",
           "legendFormat": "tx: {{domain}}",
           "refId": "B"
@@ -1154,25 +1154,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_errors_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_errors_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "rx err: {{domain}}: {{name}}",
           "refId": "A"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_errors_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_errors_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "tx err: {{domain}}: {{name}}",
           "refId": "B"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_drops_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_receive_drops_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "rx drop: {{domain}}: {{name}}",
           "refId": "C"
         },
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_drops_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,target_device)(rate(libvirt_domain_interface_stats_transmit_drops_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "tx drop: {{domain}}: {{name}}",
           "refId": "D"
@@ -1284,7 +1284,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_read_requests_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_read_requests_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}, {{target_device}}",
           "refId": "A"
@@ -1382,7 +1382,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_write_requests_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_write_requests_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}, {{target_device}}",
           "refId": "A"
@@ -1480,7 +1480,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_read_bytes_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_read_bytes_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}, {{target_device}}",
           "refId": "A"
@@ -1578,7 +1578,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_write_bytes_total{dns_name=~\"$host\"}[1m]))\n",
+          "expr": "sum without(flavor,group,instance,job,project_name,source_bridge,uuid,source_file)(rate(libvirt_domain_block_stats_write_bytes_total{dns_name=~\"$dns_name\"}[1m]))\n",
           "interval": "",
           "legendFormat": "{{domain}}: {{name}}, {{target_device}}",
           "refId": "A"
@@ -1644,7 +1644,7 @@
         "includeAll": false,
         "label": null,
         "multi": true,
-        "name": "host",
+        "name": "dns_name",
         "options": [],
         "query": "label_values(libvirt_up, dns_name)",
         "refresh": 1,

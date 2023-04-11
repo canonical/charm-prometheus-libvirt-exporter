@@ -4,6 +4,8 @@ parts:
     source: src
     plugin: reactive
     build-snaps: [charm]
+    # This is tmp solution until #215 is not resolved. https://github.com/juju-solutions/layer-basic/issues/215
+    build-packages: [python3-dev]
 bases:
     - build-on:
         - name: ubuntu
