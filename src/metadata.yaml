@@ -1,6 +1,7 @@
 name: prometheus-libvirt-exporter
 summary: Prometheus libvirt exporter
-maintainer: Llama (LMA) Charmers <llama-charmers@lists.ubuntu.com> 
+maintainer: BootStack Charmers <bootstack-doc@lists.canonical.com>
+docs: https://discourse.charmhub.io/t/prometheus-libvirt-exporter-docs-index/11342
 description: |
   This exporter connects to any libvirt daemon and exports per-domain metrics
   related to CPU, memory, disk and network usage.
