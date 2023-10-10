@@ -23,6 +23,22 @@ UBUNTU_SERIES_CODE = {
     "bionic": "18.04",
     "xenial": "16.04",
 }
+UBUNTU_BASE_SERIES_MAP = {
+    "ubuntu@22.04": "jammy",
+    "ubuntu@20.04": "focal",
+    "ubuntu@18.04": "bionic",
+    "ubuntu@16.04": "xenial",
+}
+
+
+def get_machine_series(machine):
+    """Thin wrapper to ensure compatibility with juju 2 and 3."""
+    series = ""
+    try:
+        series = machine.series
+    except KeyError:
+        series = UBUNTU_BASE_SERIES_MAP.get(machine.base)
+    return series
 
 
 class BasePrometheusLibvirtExporterTest(unittest.TestCase):
@@ -92,7 +108,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
 
         # Install libvirt pkgs and bring up VM
         machine = model.get_machines(cls.application_name)[0]
-        series = machine.series
+        series = get_machine_series(machine)
 
         osinfo = ""
         if series == "jammy":
@@ -206,7 +222,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
     def test_04_grafana_dashboard(self):
         """Test if the grafana dashboard was successfully registered."""
         action = model.run_action_on_leader("grafana", "get-admin-password")
-        self.assertTrue(action.data["results"]["Code"] == "0")
+        self.assertTrue(action.data["results"]["return-code"] == "0")
         passwd = action.data["results"]["password"]
         dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
         headers = {"Content-Type": "application/json"}
