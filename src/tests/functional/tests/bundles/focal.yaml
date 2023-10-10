@@ -13,6 +13,7 @@ applications:
     num_units: 1
   grafana:
     charm: ch:grafana
+    channel: latest/edge # Temporary fix for 2023.10 release
     num_units: 1
 relations:
   - - ubuntu
