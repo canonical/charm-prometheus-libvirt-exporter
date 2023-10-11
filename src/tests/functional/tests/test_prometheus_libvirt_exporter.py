@@ -20,14 +20,10 @@ CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.i
 UBUNTU_SERIES_CODE = {
     "jammy": "22.04",
     "focal": "20.04",
-    "bionic": "18.04",
-    "xenial": "16.04",
 }
 UBUNTU_BASE_SERIES_MAP = {
     "ubuntu@22.04": "jammy",
     "ubuntu@20.04": "focal",
-    "ubuntu@18.04": "bionic",
-    "ubuntu@16.04": "xenial",
 }
 
 
