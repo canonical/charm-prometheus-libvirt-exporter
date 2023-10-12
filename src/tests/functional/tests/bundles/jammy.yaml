@@ -16,6 +16,7 @@ applications:
   grafana:
     charm: grafana
     series: focal
+    channel: latest/edge # Temporary fix for 2023.10 release
     num_units: 1
 relations:
   - - ubuntu

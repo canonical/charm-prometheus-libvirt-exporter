@@ -3,7 +3,7 @@ options:
     default: "stable"
     type: string
     description: |
-        If install_method is set to "snap" this option controlls channel name.
+        If install_method is set to "snap" this option controls channel name.
         Supported values are: "stable", "candidate", "beta" and "edge"
   nagios_context:
     default: "juju"

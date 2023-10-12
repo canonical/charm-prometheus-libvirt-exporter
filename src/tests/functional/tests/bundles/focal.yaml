@@ -1,18 +1,19 @@
 series: focal
 applications:
   ubuntu:
-    charm: cs:ubuntu
+    charm: ch:ubuntu
     num_units: 1
   prometheus-libvirt-exporter:
     options:
       snap_channel: stable
   nrpe:
-    charm: cs:nrpe
+    charm: ch:nrpe
   prometheus:
-    charm: cs:prometheus2
+    charm: ch:prometheus2
     num_units: 1
   grafana:
-    charm: cs:grafana
+    charm: ch:grafana
+    channel: latest/edge # Temporary fix for 2023.10 release
     num_units: 1
 relations:
   - - ubuntu
