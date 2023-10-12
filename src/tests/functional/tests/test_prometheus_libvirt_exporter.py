@@ -218,7 +218,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
     def test_04_grafana_dashboard(self):
         """Test if the grafana dashboard was successfully registered."""
         action = model.run_action_on_leader("grafana", "get-admin-password")
-        self.assertTrue(action.data["results"]["return-code"] == "0")
+        self.assertTrue(str(action.data["results"]["return-code"]) == "0")
         passwd = action.data["results"]["password"]
         dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
         headers = {"Content-Type": "application/json"}
