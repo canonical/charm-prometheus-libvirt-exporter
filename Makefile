@@ -50,12 +50,12 @@ submodules-update:
 	@git submodule update --init --recursive --remote --merge
 
 build:
+	sudo apt install -y unzip
 	@echo "Building charm to directory ${CHARM_BUILD_DIR}/${CHARM_NAME}"
 	@-git rev-parse --abbrev-ref HEAD > ./src/repo-info
 	@charmcraft -v pack ${BUILD_ARGS}
 	@bash -c ./rename.sh
 	@mkdir -p ${CHARM_BUILD_DIR}/${CHARM_NAME}
-	@unzip ${PROJECTPATH}/${CHARM_NAME}.charm -d ${CHARM_BUILD_DIR}/${CHARM_NAME}
 
 release: clean build
 	@echo "Charm is built at ${PROJECTPATH}/${CHARM_NAME}.charm"
