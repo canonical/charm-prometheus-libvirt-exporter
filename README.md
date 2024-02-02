@@ -70,4 +70,4 @@ of controller subnet and model subnet.
 See [List of metrics](./metrics.md)
 
 # Contact Information
-- Charm bugs: https://bugs.launchpad.net/charm-prometheus-libvirt-exporter
+- Charm bugs: https://github.com/canonical/charm-prometheus-libvirt-exporter/issues
