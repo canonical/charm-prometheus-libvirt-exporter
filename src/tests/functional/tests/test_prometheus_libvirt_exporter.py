@@ -1,4 +1,5 @@
 """Encapsulate prometheus-libvirt-exporter testing."""
+
 import logging
 import os
 import re
