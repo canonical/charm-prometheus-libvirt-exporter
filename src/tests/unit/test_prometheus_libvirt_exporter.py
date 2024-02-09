@@ -1,4 +1,5 @@
 """Unit tests for prometheus-libvirt-exporter reactive script."""
+
 import importlib
 import os
 import sys
