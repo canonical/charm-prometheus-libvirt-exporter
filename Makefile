@@ -35,10 +35,8 @@ help:
 
 clean:
 	@echo "Cleaning files"
-	@git clean -ffXd -e '!.idea'
-	@echo "Cleaning existing build"
 	@rm -rf ${PROJECTPATH}/${CHARM_NAME}.charm
-	@rm -rf ${CHARM_BUILD_DIR}/*
+	@echo "Cleaning charmcraft"
 	@charmcraft clean
 
 submodules:
@@ -50,12 +48,10 @@ submodules-update:
 	@git submodule update --init --recursive --remote --merge
 
 build:
-	sudo apt install -y unzip
-	@echo "Building charm to directory ${CHARM_BUILD_DIR}/${CHARM_NAME}"
+	@echo "Building charm to directory ${PROJECTPATH}"
 	@-git rev-parse --abbrev-ref HEAD > ./src/repo-info
 	@charmcraft -v pack ${BUILD_ARGS}
 	@bash -c ./rename.sh
-	@mkdir -p ${CHARM_BUILD_DIR}/${CHARM_NAME}
 
 release: clean build
 	@echo "Charm is built at ${PROJECTPATH}/${CHARM_NAME}.charm"
@@ -78,8 +74,8 @@ unittests:
 	@cd src && tox -e unit
 
 functional: build
-	@echo "Executing functional tests in ${CHARM_BUILD_DIR}"
-	@cd src && CHARM_PROJECTPATH=${PROJECTPATH} CHARM_BUILD_DIR=${CHARM_BUILD_DIR} tox -e func
+	@echo "Executing functional tests using built charm at ${PROJECTPATH}"
+	@cd src && CHARM_LOCATION=${PROJECTPATH} tox -e func
 
 test: lint proof unittests functional
 	@echo "Tests completed for charm ${CHARM_NAME}."
