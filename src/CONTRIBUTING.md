@@ -2,7 +2,7 @@
 
 ## Developing
 
-Fork the [repository](https://code.launchpad.net/charm-prometheus-libvirt-exporter),
+Fork the [repository](https://github.com/canonical/charm-prometheus-libvirt-exporter/),
 and make some changes.
 
 ## Testing
