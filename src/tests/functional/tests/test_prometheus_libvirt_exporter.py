@@ -63,7 +63,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         code = result.get("Code")
         if code != "0":
             raise model.CommandRunFailed("uname -p", result)
-        cls.arch = result.get("Stdout", "")
+        cls.arch = result.get("Stdout", "").strip()
 
         # Ubuntu_ARM64_4C_16G_01 github runner does not support kvm, so we skip
         # the setting up vm here. If the workflow changes, please visit this
