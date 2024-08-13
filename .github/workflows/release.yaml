@@ -16,7 +16,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [[ubuntu-latest], [Ubuntu_ARM64_4C_16G_01]]
+        runs-on:
+          - ubuntu-latest
+          - Ubuntu_ARM64_4C_16G_01
     steps:
       - name: Checkout
         uses: actions/checkout@v4
