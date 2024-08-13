@@ -57,6 +57,20 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         os.environ["ZAZA_FEATURE_BUG472"] = "1"
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
         del os.environ["ZAZA_FEATURE_BUG472"]
+
+        # Get the arch of the VM
+        result = model.run_on_unit(cls.lead_unit_name, "uname -p")
+        code = result.get("Code")
+        if code != "0":
+            raise model.CommandRunFailed("uname -p", result)
+        cls.arch = result.get("Stdout", "")
+
+        # Ubuntu_ARM64_4C_16G_01 github runner does not support kvm, so we skip
+        # the setting up vm here. If the workflow changes, please visit this
+        # condition.
+        if cls.arch == "aarch64":
+            return
+
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
@@ -102,11 +116,6 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
 
         wget_cmd += "-q {} -O /var/lib/libvirt/images/cirros.img".format(CIRROS_URL)
 
-        # Get the arch of the VM
-        result = model.run_on_unit(cls.lead_unit_name, "uname -p")
-        code = result.get("Code")
-        if code != "0":
-            raise model.CommandRunFailed(cmd, result)
         wget_cmd = wget_cmd.format(result.get("Stdout").strip())
 
         # Install libvirt pkgs and bring up VM
@@ -173,6 +182,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         url = "http://{}:{}/metrics".format(
             self.prometheus_libvirt_exporter_ip, DEFAULT_API_PORT
         )
+        expected_machine_count = 1 if self.arch == "x86_64" else 0
         while time.time() < timeout:
             response = requests.get(url)
 
@@ -182,10 +192,10 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
                     for line in response.text.splitlines()
                     if line.startswith("libvirt")
                 ]
-                self.assertTrue("libvirt_up 1" in metrics)
+                self.assertTrue(f"libvirt_up {expected_machine_count}" in metrics)
                 pat = re.compile(r"libvirt_domain_info_virtual_cpus.*testvm")
                 matches = [metric for metric in metrics if pat.search(metric)]
-                self.assertEqual(len(matches), 1)
+                self.assertEqual(len(matches), expected_machine_count)
                 return
 
             logging.warning(
