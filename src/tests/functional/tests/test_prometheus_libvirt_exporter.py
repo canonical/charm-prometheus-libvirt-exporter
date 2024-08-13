@@ -17,7 +17,7 @@ TEST_TIMEOUT = 180
 DEFAULT_API_PORT = "9177"
 DEFAULT_API_URL = "/"
 PACKAGES = ("qemu-kvm", "libvirt-daemon", "libvirt-daemon-system", "virtinst")
-CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img"
+CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-{}-disk.img"
 UBUNTU_SERIES_CODE = {
     "jammy": "22.04",
     "focal": "20.04",
@@ -101,6 +101,13 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             )
 
         wget_cmd += "-q {} -O /var/lib/libvirt/images/cirros.img".format(CIRROS_URL)
+
+        # Get the arch of the VM
+        result = model.run_on_unit(cls.lead_unit_name, "uname -p")
+        code = result.get("Code")
+        if code != "0":
+            raise model.CommandRunFailed(cmd, result)
+        wget_cmd = wget_cmd.format(result.Stdout)
 
         # Install libvirt pkgs and bring up VM
         machine = model.get_machines(cls.application_name)[0]
