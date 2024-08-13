@@ -57,7 +57,6 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         os.environ["ZAZA_FEATURE_BUG472"] = "1"
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
         del os.environ["ZAZA_FEATURE_BUG472"]
-        cls.grafana_ip = model.get_app_ips("grafana")[0]
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
