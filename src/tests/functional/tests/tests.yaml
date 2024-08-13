@@ -9,10 +9,5 @@ dev_bundles:
 target_deploy_status:
   ubuntu:
     workload-status-message-prefix: ""
-  grafana:
-    workload-status-message-prefix: Started
-  nrpe:
-    workload-status: blocked
-    workload-status-message-prefix: Nagios server not configured or related
 tests:
   - tests.test_prometheus_libvirt_exporter.CharmOperationTest

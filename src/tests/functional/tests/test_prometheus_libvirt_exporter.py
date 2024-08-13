@@ -161,26 +161,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             "Result: {result}".format(curl_command=curl_command, result=response)
         )
 
-    def test_02_nrpe_http_check(self):
-        """Verify nrpe check exists."""
-        expected_nrpe_check = (
-            "command[check_prometheus_libvirt_exporter_http]"
-            "={} -I 127.0.0.1 -p {} -u {} -e 200".format(
-                "/usr/lib/nagios/plugins/check_http", DEFAULT_API_PORT, DEFAULT_API_URL
-            )
-        )
-        logging.debug(
-            "Verify the nrpe check is created and has the required content..."
-        )
-        cmd = "cat /etc/nagios/nrpe.d/check_prometheus_libvirt_exporter_http.cfg"
-        result = model.run_on_unit(self.lead_unit_name, cmd)
-        code = result.get("Code")
-        if code != "0":
-            raise model.CommandRunFailed(cmd, result)
-        content = result.get("Stdout")
-        self.assertTrue(expected_nrpe_check in content)
-
-    def test_03_api_metrics(self):
+    def test_02_api_metrics(self):
         """Verify if we get libvirt metrics from the scrape endpoint."""
         timeout = time.time() + TEST_TIMEOUT
         url = "http://{}:{}/metrics".format(
@@ -215,17 +196,3 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
                 url, response.status_code, response.text
             )
         )
-
-    def test_04_grafana_dashboard(self):
-        """Test if the grafana dashboard was successfully registered."""
-        action = model.run_action_on_leader("grafana", "get-admin-password")
-        self.assertTrue(str(action.data["results"]["return-code"]) == "0")
-        passwd = action.data["results"]["password"]
-        dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
-        headers = {"Content-Type": "application/json"}
-        params = {"type": "dash-db", "query": "libvirt"}
-        api_auth = ("admin", passwd)
-        r = requests.get(dash_url, auth=api_auth, headers=headers, params=params)
-        self.assertEqual(r.status_code, 200)
-        dash = [d for d in r.json() if "Libvirt" in d["title"]]
-        self.assertEqual(len(dash), 1)
