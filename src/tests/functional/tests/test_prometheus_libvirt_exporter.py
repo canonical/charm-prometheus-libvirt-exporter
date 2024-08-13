@@ -107,7 +107,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         code = result.get("Code")
         if code != "0":
             raise model.CommandRunFailed(cmd, result)
-        wget_cmd = wget_cmd.format(result.Stdout)
+        wget_cmd = wget_cmd.format(result.get("Stdout").strip())
 
         # Install libvirt pkgs and bring up VM
         machine = model.get_machines(cls.application_name)[0]
