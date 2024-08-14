@@ -5,7 +5,7 @@ applications:
   prometheus-libvirt-exporter:
     charm: prometheus-libvirt-exporter
     options:
-      snap_channel: edge  # REMOVE ME AFTER TESTING
+      snap_channel: stable
 relations:
   - - ubuntu
     - prometheus-libvirt-exporter
