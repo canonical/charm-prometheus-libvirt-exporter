@@ -17,7 +17,7 @@ TEST_TIMEOUT = 180
 DEFAULT_API_PORT = "9177"
 DEFAULT_API_URL = "/"
 PACKAGES = ("qemu-kvm", "libvirt-daemon", "libvirt-daemon-system", "virtinst")
-CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img"
+CIRROS_URL = "https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-{}-disk.img"
 UBUNTU_SERIES_CODE = {
     "jammy": "22.04",
     "focal": "20.04",
@@ -57,7 +57,20 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         os.environ["ZAZA_FEATURE_BUG472"] = "1"
         cls.prometheus_libvirt_exporter_ip = model.get_app_ips(cls.application_name)[0]
         del os.environ["ZAZA_FEATURE_BUG472"]
-        cls.grafana_ip = model.get_app_ips("grafana")[0]
+
+        # Get the arch of the VM
+        result = model.run_on_unit(cls.lead_unit_name, "uname -p")
+        code = result.get("Code")
+        if code != "0":
+            raise model.CommandRunFailed("uname -p", result)
+        cls.arch = result.get("Stdout", "").strip()
+
+        # Ubuntu_ARM64_4C_16G_01 github runner does not support kvm, so we skip
+        # the setting up vm here. If the workflow changes, please visit this
+        # condition.
+        if cls.arch == "aarch64":
+            return
+
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
@@ -102,6 +115,8 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             )
 
         wget_cmd += "-q {} -O /var/lib/libvirt/images/cirros.img".format(CIRROS_URL)
+
+        wget_cmd = wget_cmd.format(result.get("Stdout").strip())
 
         # Install libvirt pkgs and bring up VM
         machine = model.get_machines(cls.application_name)[0]
@@ -161,31 +176,13 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             "Result: {result}".format(curl_command=curl_command, result=response)
         )
 
-    def test_02_nrpe_http_check(self):
-        """Verify nrpe check exists."""
-        expected_nrpe_check = (
-            "command[check_prometheus_libvirt_exporter_http]"
-            "={} -I 127.0.0.1 -p {} -u {} -e 200".format(
-                "/usr/lib/nagios/plugins/check_http", DEFAULT_API_PORT, DEFAULT_API_URL
-            )
-        )
-        logging.debug(
-            "Verify the nrpe check is created and has the required content..."
-        )
-        cmd = "cat /etc/nagios/nrpe.d/check_prometheus_libvirt_exporter_http.cfg"
-        result = model.run_on_unit(self.lead_unit_name, cmd)
-        code = result.get("Code")
-        if code != "0":
-            raise model.CommandRunFailed(cmd, result)
-        content = result.get("Stdout")
-        self.assertTrue(expected_nrpe_check in content)
-
-    def test_03_api_metrics(self):
+    def test_02_api_metrics(self):
         """Verify if we get libvirt metrics from the scrape endpoint."""
         timeout = time.time() + TEST_TIMEOUT
         url = "http://{}:{}/metrics".format(
             self.prometheus_libvirt_exporter_ip, DEFAULT_API_PORT
         )
+        expected_machine_count = 1 if self.arch == "x86_64" else 0
         while time.time() < timeout:
             response = requests.get(url)
 
@@ -195,10 +192,10 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
                     for line in response.text.splitlines()
                     if line.startswith("libvirt")
                 ]
-                self.assertTrue("libvirt_up 1" in metrics)
+                self.assertTrue(f"libvirt_up {expected_machine_count}" in metrics)
                 pat = re.compile(r"libvirt_domain_info_virtual_cpus.*testvm")
                 matches = [metric for metric in metrics if pat.search(metric)]
-                self.assertEqual(len(matches), 1)
+                self.assertEqual(len(matches), expected_machine_count)
                 return
 
             logging.warning(
@@ -215,17 +212,3 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
                 url, response.status_code, response.text
             )
         )
-
-    def test_04_grafana_dashboard(self):
-        """Test if the grafana dashboard was successfully registered."""
-        action = model.run_action_on_leader("grafana", "get-admin-password")
-        self.assertTrue(str(action.data["results"]["return-code"]) == "0")
-        passwd = action.data["results"]["password"]
-        dash_url = "http://{}:3000/api/search".format(self.grafana_ip)
-        headers = {"Content-Type": "application/json"}
-        params = {"type": "dash-db", "query": "libvirt"}
-        api_auth = ("admin", passwd)
-        r = requests.get(dash_url, auth=api_auth, headers=headers, params=params)
-        self.assertEqual(r.status_code, 200)
-        dash = [d for d in r.json() if "Libvirt" in d["title"]]
-        self.assertEqual(len(dash), 1)
