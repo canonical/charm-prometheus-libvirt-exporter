@@ -1,3 +1,8 @@
+# This file is centrally managed as a template file in https://github.com/canonical/solutions-engineering-automation
+# To update the file:
+# - Edit it in the canonical/solutions-engineering-automation repository.
+# - Open a PR with the changes.
+# - When the PR merges, the soleng-terraform bot will open a PR to the target repositories with the changes.
 name: Release to Edge
 
 on:
@@ -10,18 +15,19 @@ jobs:
   check:
     uses: ./.github/workflows/check.yaml
     secrets: inherit
+
   release:
     needs: check
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
-        runs-on:
-          - ubuntu-latest
-          - Ubuntu_ARM64_4C_16G_01
+        runs-on: [[ubuntu-latest], [Ubuntu_ARM64_4C_16G_01]]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Initialize lxd  # This should dropped once it's implemented on charming-actions itself. https://github.com/canonical/charming-actions/issues/140
         # revision is latest main at time of writing; using because it contains a fix to https://github.com/canonical/setup-lxd/issues/19
