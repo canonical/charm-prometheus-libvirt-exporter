@@ -59,11 +59,11 @@ release: clean build
 
 lint:
 	@echo "Running lint checks"
-	@cd tox -e lint
+	@tox -e lint
 
 black:
 	@echo "Reformat files with black"
-	@cd tox -e black
+	@tox -e black
 
 proof: build
 	@echo "Running charm proof"
@@ -71,11 +71,11 @@ proof: build
 
 unittests:
 	@echo "Running unit tests"
-	@cd tox -e unit
+	@tox -e unit
 
 functional: build
 	@echo "Executing functional tests using built charm at ${PROJECTPATH}"
-	@cd CHARM_LOCATION=${PROJECTPATH} tox -e func
+	@CHARM_LOCATION=${PROJECTPATH} tox -e func
 
 test: lint proof unittests functional
 	@echo "Tests completed for charm ${CHARM_NAME}."
