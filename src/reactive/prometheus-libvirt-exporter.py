@@ -86,7 +86,8 @@ def snap_channel_changed():
     remove_state("libvirt-exporter.started")
 
 
-@when_all("libvirt-exporter.started", "scrape.available")
+@when_all("libvirt-exporter.started", "endpoint.scrape.joined")
+@when_not("scrape.available")
 def configure_scrape_relation(scrape_service):
     """Connect prometheus to the the exporter for consumption."""
     scrape_service.configure(PORT_NUMBER)
