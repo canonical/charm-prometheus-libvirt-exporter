@@ -80,7 +80,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             hostname = result.get("Stdout").strip()
 
             # Set privileged container
-            logging.info(f"Running cmd: 'lxc config set {hostname} " "security.privileged true'")
+            logging.info(f"Running cmd: 'lxc config set {hostname} security.privileged true'")
             privileged_cmd = f"lxc config set {hostname} security.privileged true"
             subprocess.call(privileged_cmd, shell=True)
 
