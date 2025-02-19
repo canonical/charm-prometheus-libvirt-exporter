@@ -153,7 +153,7 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
             response = model.run_on_unit(self.lead_unit_name, curl_command)
             if response["Code"] == "0":
                 return
-            logging.warning("Unexpected curl response: {response}. Retrying in 30s.")
+            logging.warning(f"Unexpected curl response: {response}. Retrying in 30s.")
             time.sleep(30)
 
         # we didn't get rc=0 in the allowed time, fail the test
