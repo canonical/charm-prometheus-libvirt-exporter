@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 from zipfile import BadZipFile, ZipFile
 
-from charmhelpers.contrib.charmsupport import nrpe
+from charmhelpers.contrib.charmsupport import nrpe  # pylint: disable=no-name-in-module
 from charmhelpers.core import hookenv, host
 from charms.layer import snap  # pylint: disable=import-error,no-name-in-module
 from charms.reactive import (
