@@ -10,8 +10,7 @@ from zipfile import BadZipFile, ZipFile
 
 from charmhelpers.contrib.charmsupport import nrpe
 from charmhelpers.core import hookenv, host
-
-from charms.layer import snap
+from charms.layer import snap  # pylint: disable=import-error,no-name-in-module
 from charms.reactive import (
     endpoint_from_flag,
     hook,
@@ -65,7 +64,7 @@ def start_snap():
     """Configure snap.prometheus-libvirt-exporter.daemon service."""
     if not host.service_running(SVC_NAME):
         hookenv.status_set("maintenance", "Service is down, starting")
-        hookenv.log("Service {} is down, starting...".format(SVC_NAME))
+        hookenv.log(f"Service {SVC_NAME} is down, starting...")
         host.service_start(SVC_NAME)
         hookenv.status_set("active", "Service started")
         hookenv.log("start_snap() Service started")
@@ -109,7 +108,7 @@ def prometheus_changed():
 
 @when("nrpe-external-master.available")
 @when_not("libvirt-exporter.configured")
-def update_nrpe_config(svc):
+def update_nrpe_config(svc):  # pylint: disable=unused-argument
     """Configure the nrpe check for the service."""
     if not os.path.exists("/var/lib/nagios"):
         hookenv.status_set("blocked", "Waiting for nrpe package installation")
@@ -122,7 +121,7 @@ def update_nrpe_config(svc):
     # check / instead of /metrics to avoid lp:1883549, expect status code 200
     nrpe_setup.add_check(
         shortname="prometheus_libvirt_exporter_http",
-        check_cmd="check_http -I 127.0.0.1 -p {} -u / -e 200".format(PORT_NUMBER),
+        check_cmd=f"check_http -I 127.0.0.1 -p {PORT_NUMBER} -u / -e 200",
         description="Prometheus Libvirt Exporter HTTP check",
     )
     nrpe_setup.write()
@@ -173,9 +172,7 @@ def register_grafana_dashboards():
         dash_dict["digest"] = digest
         dash_dict["source_model"] = hookenv.model_name()
         grafana_endpoint.register_dashboard(dash_file.stem, dash_dict)
-        hookenv.log(
-            "register_grafana_dashboard: pushed {}, digest {}".format(dash_file, digest)
-        )
+        hookenv.log(f"register_grafana_dashboard: pushed {dash_file}, digest {digest}")
 
 
 def update_dashboards_from_resource():
@@ -190,7 +187,7 @@ def update_dashboards_from_resource():
     try:
         shutil.copy(dashboards_zip_resource, DASHBOARD_PATH)
     except IOError as error:
-        hookenv.log("Problem copying resource: {}".format(error), hookenv.ERROR)
+        hookenv.log(f"Problem copying resource: {error}", hookenv.ERROR)
         return
 
     try:
@@ -198,12 +195,10 @@ def update_dashboards_from_resource():
             zipfile.extractall(path=DASHBOARD_PATH)
             hookenv.log("Extracted dashboards from resource", hookenv.DEBUG)
     except BadZipFile as error:
-        hookenv.log("BadZipFile: {}".format(error), hookenv.ERROR)
+        hookenv.log(f"BadZipFile: {error}", hookenv.ERROR)
         return
     except PermissionError as error:
-        hookenv.log(
-            "Unable to unzip the provided resource: {}".format(error), hookenv.ERROR
-        )
+        hookenv.log(f"Unable to unzip the provided resource: {error}", hookenv.ERROR)
         return
 
     register_grafana_dashboards()
@@ -211,16 +206,16 @@ def update_dashboards_from_resource():
 
 def configure_libvirtd_apparmor_local_profile(libvirtd_apparmor_local_profile):
     """Silence libvirtd ptrace apparmor denials from kern.log."""
-    deny_ptrace_rule = (
-        "deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,"
-    )
+    deny_ptrace_rule = "deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,"
 
     # if there is no libvirtd installed this is a noop
     if not os.path.exists(libvirtd_apparmor_local_profile):
         return
 
     # Read current local profile and strip new lines.
-    current_profile_lines = open(libvirtd_apparmor_local_profile, "r").readlines()
+    with open(libvirtd_apparmor_local_profile, "r", encoding="utf-8") as file:
+        current_profile_lines = file.readlines()
+
     current_profile_lines = list(map(str.strip, current_profile_lines))
 
     # If deny ptrace rule is already there do nothing.
@@ -228,7 +223,8 @@ def configure_libvirtd_apparmor_local_profile(libvirtd_apparmor_local_profile):
         return
 
     # Add ptrace deny rule
-    open(libvirtd_apparmor_local_profile, "a").write("\n" + deny_ptrace_rule + "\n")
+    with open(libvirtd_apparmor_local_profile, "a", encoding="utf-8") as file:
+        file.write("\n" + deny_ptrace_rule + "\n")
 
     # Reload libvirtd apparmor profile
     libvirtd_apparmor_profile = "/etc/apparmor.d/usr.sbin.libvirtd"
