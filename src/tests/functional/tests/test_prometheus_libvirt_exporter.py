@@ -8,10 +8,8 @@ import time
 import unittest
 
 import requests
-
 import zaza.controller as controller
 import zaza.model as model
-
 
 TEST_TIMEOUT = 180
 DEFAULT_API_PORT = "9177"
@@ -73,7 +71,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
 
         if controller.get_cloud_type() == "lxd":
             # Get hostname
-            logging.info("Getting hostname for unit {}".format(cls.lead_unit_name))
+            logging.info(f"Getting hostname for unit {cls.lead_unit_name}")
             cmd = "hostname"
             result = model.run_on_unit(cls.lead_unit_name, cmd)
             code = result.get("Code")
@@ -82,39 +80,30 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             hostname = result.get("Stdout").strip()
 
             # Set privileged container
-            logging.info(
-                "Running cmd: 'lxc config set {} "
-                "security.privileged true'".format(hostname)
-            )
-            privileged_cmd = "lxc config set {} security.privileged true".format(
-                hostname
-            )
+            logging.info(f"Running cmd: 'lxc config set {hostname} security.privileged true'")
+            privileged_cmd = f"lxc config set {hostname} security.privileged true"
             subprocess.call(privileged_cmd, shell=True)
 
             # Attach kvm device
             logging.info(
-                "Running cmd: 'lxc config device add {} "
-                "kvm unix-char path=/dev/kvm'".format(hostname)
+                f"Running cmd: 'lxc config device add {hostname} kvm unix-char path=/dev/kvm'"
             )
-            kvm_cmd = "lxc config device add {} kvm unix-char path=/dev/kvm".format(
-                hostname
-            )
+            kvm_cmd = f"lxc config device add {hostname} kvm unix-char path=/dev/kvm"
             subprocess.call(kvm_cmd, shell=True)
             # Restart container
-            logging.info("Running cmd: 'lxc restart {}'".format(hostname))
-            restart_lxc = "lxc restart {}".format(hostname)
+            logging.info(f"Running cmd: 'lxc restart {hostname}'")
+            restart_lxc = f"lxc restart {hostname}"
             subprocess.call(restart_lxc, shell=True)
             model.block_until_all_units_idle()
 
         # Set proxy on wget if present.
         wget_cmd = "sudo wget "
 
-        if os.getenv("HTTPS_PROXY"):
-            wget_cmd += "-e use_proxy=yes -e https_proxy='{}' ".format(
-                os.getenv("HTTPS_PROXY")
-            )
+        https_proxy = os.getenv("HTTPS_PROXY")
+        if https_proxy:
+            wget_cmd += f"-e use_proxy=yes -e https_proxy='{https_proxy}' "
 
-        wget_cmd += "-q {} -O /var/lib/libvirt/images/cirros.img".format(CIRROS_URL)
+        wget_cmd += f"-q {CIRROS_URL} -O /var/lib/libvirt/images/cirros.img"
 
         wget_cmd = wget_cmd.format(result.get("Stdout").strip())
 
@@ -124,7 +113,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
 
         osinfo = ""
         if series == "jammy":
-            osinfo = "--osinfo ubuntu{}".format(UBUNTU_SERIES_CODE.get(series))
+            osinfo = f"--osinfo ubuntu{UBUNTU_SERIES_CODE.get(series)}"
 
         cmd = """
         sudo apt-get update
@@ -158,39 +147,33 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
         Curl the api endpoint.
         We'll retry until the CURL_TIMEOUT.
         """
-        curl_command = "curl http://localhost:{}/metrics".format(DEFAULT_API_PORT)
+        curl_command = f"curl http://localhost:{DEFAULT_API_PORT}/metrics"
         timeout = time.time() + TEST_TIMEOUT
         while time.time() < timeout:
             response = model.run_on_unit(self.lead_unit_name, curl_command)
             if response["Code"] == "0":
                 return
-            logging.warning(
-                "Unexpected curl response: {}. Retrying in 30s.".format(response)
-            )
+            logging.warning(f"Unexpected curl response: {response}. Retrying in 30s.")
             time.sleep(30)
 
         # we didn't get rc=0 in the allowed time, fail the test
         self.fail(
             "Prometheus-libvirt-exporter didn't respond to the command \n"
-            "'{curl_command}' as expected.\n"
-            "Result: {result}".format(curl_command=curl_command, result=response)
+            f"'{curl_command}' as expected.\n"
+            f"Result: {response}"
         )
 
     def test_02_api_metrics(self):
         """Verify if we get libvirt metrics from the scrape endpoint."""
         timeout = time.time() + TEST_TIMEOUT
-        url = "http://{}:{}/metrics".format(
-            self.prometheus_libvirt_exporter_ip, DEFAULT_API_PORT
-        )
+        url = f"http://{self.prometheus_libvirt_exporter_ip}:{DEFAULT_API_PORT}/metrics"
         expected_machine_count = 1 if self.arch == "x86_64" else 0
         while time.time() < timeout:
             response = requests.get(url)
 
             if response.status_code == 200:
                 metrics = [
-                    line
-                    for line in response.text.splitlines()
-                    if line.startswith("libvirt")
+                    line for line in response.text.splitlines() if line.startswith("libvirt")
                 ]
                 self.assertTrue(f"libvirt_up {expected_machine_count}" in metrics)
                 pat = re.compile(r"libvirt_domain_info_virtual_cpus.*testvm")
@@ -199,16 +182,12 @@ class CharmOperationTest(BasePrometheusLibvirtExporterTest):
                 return
 
             logging.warning(
-                "Unexpected GET response. Response Code: {}. Retrying in 30s.".format(
-                    response.status_code
-                )
+                f"Unexpected GET response. Response Code: {response.status_code}. Retrying in 30s."
             )
             time.sleep(30)
 
         self.fail(
             "Prometheus-libvirt-exporter didn't respond to the get request to \n"
-            "'{}' as expected.\n"
-            "Response code: {}, Text: {}".format(
-                url, response.status_code, response.text
-            )
+            f"'{url}' as expected.\n"
+            f"Response code: {response.status_code}, Text: {response.text}"
         )

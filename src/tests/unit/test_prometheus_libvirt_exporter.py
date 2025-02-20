@@ -10,9 +10,7 @@ from unittest import mock
 layer_mock = mock.Mock()
 sys.modules["charms.layer"] = layer_mock
 
-prometheus_libvirt_exporter = importlib.import_module(
-    "reactive.prometheus-libvirt-exporter"
-)
+prometheus_libvirt_exporter = importlib.import_module("reactive.prometheus_libvirt_exporter")
 
 local_profile_no_change = """# Rule is already present
 deny ptrace (read) peer=snap.prometheus-libvirt-exporter.daemon,
@@ -31,7 +29,7 @@ class TestLibvirtdApparmorLocalProfile(unittest.TestCase):
     def tearDown(self):  # noqa: D102
         os.remove(self.libvirtd_apparmor_local_profile)
 
-    @mock.patch("reactive.prometheus-libvirt-exporter.subprocess.check_call")
+    @mock.patch("reactive.prometheus_libvirt_exporter.subprocess.check_call")
     def test_no_change(self, check_call):  # noqa: D102
         open(self.libvirtd_apparmor_local_profile, "w").write(local_profile_no_change)
         prometheus_libvirt_exporter.configure_libvirtd_apparmor_local_profile(
@@ -49,7 +47,7 @@ class TestLibvirtdApparmorLocalProfile(unittest.TestCase):
         self.assertEqual(actual_lines, expected_lines)
         check_call.assert_not_called()
 
-    @mock.patch("reactive.prometheus-libvirt-exporter.subprocess.check_call")
+    @mock.patch("reactive.prometheus_libvirt_exporter.subprocess.check_call")
     def test_change(self, check_call):  # noqa: D102
         open(self.libvirtd_apparmor_local_profile, "w").write(local_profile_change)
         prometheus_libvirt_exporter.configure_libvirtd_apparmor_local_profile(
