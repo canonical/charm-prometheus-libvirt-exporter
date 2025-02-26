@@ -6,30 +6,9 @@ parts:
     build-snaps: [charm]
     # This is tmp solution until #215 is not resolved. https://github.com/juju-solutions/layer-basic/issues/215
     build-packages: [python3-dev]
-bases:
-    - build-on:
-        - name: ubuntu
-          channel: "22.04"
-          architectures: ["amd64"]
-      run-on:
-        - name: ubuntu
-          channel: "22.04"
-          architectures:
-              - amd64
-        - name: ubuntu
-          channel: "20.04"
-          architectures:
-              - amd64
-    - build-on:
-        - name: ubuntu
-          channel: "22.04"
-          architectures: ["arm64"]
-      run-on:
-        - name: ubuntu
-          channel: "22.04"
-          architectures:
-            - arm64
-        - name: ubuntu
-          channel: "20.04"
-          architectures:
-            - arm64
+
+platforms:
+  ubuntu@20.04:amd64:
+  ubuntu@22.04:amd64:
+  ubuntu@20.04:arm64:
+  ubuntu@22.04:arm64:
