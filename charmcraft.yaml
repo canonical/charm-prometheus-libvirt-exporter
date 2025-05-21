@@ -1,15 +1,14 @@
 type: charm
 parts:
   charm:
-    source: src
+    source: .
+    source-subdir: src
+    build-environment:
+    - PIP_CONSTRAINT: $CRAFT_PART_BUILD_WORK/constraints.txt
     plugin: reactive
     build-snaps: [charm]
     # This is tmp solution until #215 is not resolved. https://github.com/juju-solutions/layer-basic/issues/215
     build-packages: [python3-dev]
-    # Workaround for https://github.com/canonical/charmcraft/issues/2259
-    reactive-charm-build-arguments:
-      - --binary-wheels
-      - -v
 
 
 platforms:
