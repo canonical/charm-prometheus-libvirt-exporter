@@ -1,3 +1,6 @@
+> [!NOTE]
+> This charm is under maintenance mode. Only critical bug will be handled.
+
 # Juju prometheus libvirt exporter charm
 
 This charm provides the [Prometheus libvirt exporter](https://github.com/Tinkoff/libvirt-exporter) (via the [snap](https://snapcraft.io/prometheus-libvirt-exporter)).
