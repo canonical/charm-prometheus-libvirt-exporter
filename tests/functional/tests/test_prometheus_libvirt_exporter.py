@@ -63,12 +63,6 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
             raise model.CommandRunFailed("uname -p", result)
         cls.arch = result.get("Stdout", "").strip()
 
-        # Ubuntu_ARM64_4C_16G_01 github runner does not support kvm, so we skip
-        # the setting up vm here. If the workflow changes, please visit this
-        # condition.
-        if cls.arch == "aarch64":
-            return
-
         if controller.get_cloud_type() == "lxd":
             # Get hostname
             logging.info(f"Getting hostname for unit {cls.lead_unit_name}")
