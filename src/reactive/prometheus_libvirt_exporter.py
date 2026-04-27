@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Installs and configures prometheus-libvirt-exporter."""
+
 import hashlib
 import json
 import os

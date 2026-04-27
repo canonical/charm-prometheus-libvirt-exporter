@@ -115,17 +115,15 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
         if series == "jammy":
             osinfo = f"--osinfo ubuntu{UBUNTU_SERIES_CODE.get(series)}"
 
-        cmd = """
+        cmd = f"""
         sudo apt-get update
-        sudo apt-get -qy install {}
-        {}
+        sudo apt-get -qy install {' '.join(PACKAGES)}
+        {wget_cmd}
         sudo virt-install --name testvm --memory 128 \
           --cdrom /var/lib/libvirt/images/cirros.img \
           --nographics --nonetworks  --noautoconsole --nodisk \
-          {}
-        """.format(
-            " ".join(PACKAGES), wget_cmd, osinfo
-        )
+          {osinfo}
+        """
         result = model.run_on_unit(cls.lead_unit_name, cmd)
         code = result.get("Code")
         if code != "0":
