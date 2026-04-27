@@ -123,9 +123,7 @@ class BasePrometheusLibvirtExporterTest(unittest.TestCase):
           --cdrom /var/lib/libvirt/images/cirros.img \
           --nographics --nonetworks  --noautoconsole --nodisk \
           {}
-        """.format(
-            " ".join(PACKAGES), wget_cmd, osinfo
-        )
+        """.format(" ".join(PACKAGES), wget_cmd, osinfo)
         result = model.run_on_unit(cls.lead_unit_name, cmd)
         code = result.get("Code")
         if code != "0":

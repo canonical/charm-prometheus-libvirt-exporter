@@ -2,3 +2,5 @@ charmhelpers
 charms.reactive
 pytest
 pytest-cov
+# setuptools 81 removed pkg_resources; charms.reactive still imports it
+setuptools < 81
