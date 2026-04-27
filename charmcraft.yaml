@@ -6,7 +6,7 @@ parts:
     build-environment:
     - PIP_CONSTRAINT: $CRAFT_PART_BUILD_WORK/constraints.txt
     plugin: reactive
-    build-snaps: [charm]
+    build-snaps: ['charm/latest/edge']
     # This is tmp solution until #215 is not resolved. https://github.com/juju-solutions/layer-basic/issues/215
     build-packages: [python3-dev]
 
@@ -14,9 +14,13 @@ parts:
 platforms:
   ubuntu@20.04:amd64:
   ubuntu@22.04:amd64:
+  ubuntu@24.04:amd64:
   ubuntu@20.04:arm64:
   ubuntu@22.04:arm64:
+  ubuntu@24.04:arm64:
   ubuntu@20.04:s390x:
   ubuntu@22.04:s390x:
+  ubuntu@24.04:s390x:
   ubuntu@20.04:ppc64el:
   ubuntu@22.04:ppc64el:
+  ubuntu@24.04:ppc64el:

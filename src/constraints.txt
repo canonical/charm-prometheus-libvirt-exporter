@@ -1,2 +1,5 @@
 # See https://github.com/canonical/charmcraft/issues/2259#issuecomment-2842766428
 setuptools_scm < 8.2.0
+# setuptools 81 removed pkg_resources as a standalone importable module;
+# several reactive charm build dependencies (e.g. pbr) still import it during wheel builds.
+setuptools < 81
